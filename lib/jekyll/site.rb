@@ -43,6 +43,19 @@ module Jekyll
       self.write
     end
 
+    class PostList < Array
+      def index(obj)
+        unless @hash
+          @hash = {}
+          each_with_index do |post, idx|
+            @hash[post.object_id] = idx
+          end
+          freeze!
+        end
+        @hash[obj.object_id]
+      end
+    end
+
     # Reset Site details.
     #
     # Returns nothing
@@ -53,7 +66,7 @@ module Jekyll
                                Time.now
                              end
       self.layouts         = {}
-      self.posts           = []
+      self.posts           = PostList.new
       self.pages           = []
       self.static_files    = []
       self.categories      = Hash.new { |hash, key| hash[key] = [] }
